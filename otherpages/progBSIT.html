@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background-color: #f8f9fa;
+            }
+
+            .burger {
+                font-size: 20px; /* Keep it small */
+                cursor: pointer;
+                background-color: transparent;
+                border: none;
+                color: #970B0B;
+                margin-right: 10px; /* Small space to the right */
+            }
+
+            header {
+                display: flex;
+                align-items: center;
+                background-color: white;
+                padding: 5px 15px;
+                color: #970B0B;
+                border-bottom: 3px solid #970B0B;
+                position: relative;
+                z-index: 2;
+                justify-content: space-between; /* Space between elements */
+            }
+
+            header img {
+                height: 35px; /* Logo height */
+                margin: 0 auto; /* Center the logo */
+                text-align: center; /* Center the logo text */
+            }
+
+            header div {
+                display: flex;
+                align-items: center;
+            }
+
+            header div img {
+                width: 35px; /* User icon size */
+                height: 30px; /* User icon size */
+                border-radius: 50%; /* Rounded user icon */
+                margin-left: 10px; /* Space between icons */
+            }
+
+
+            nav {
+                width: 0;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #FDECEC;
+                color: #970B0B;
+                overflow-x: hidden;
+                transition: width 0.3s ease;
+                padding-top: 20px;
+                box-sizing: border-box;
+                z-index: 1;
+            }
+
+            nav.open {
+                width: 250px;
+            }
+
+            nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            nav ul li {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            nav ul li img {
+                width: 24px;
+                height: 24px;
+                margin-right: 15px;
+            }
+
+            nav ul li:hover {
+                background-color: #F3F3F3;
+                border-left: 5px solid #970B0B;
+            }
+            .dashboard {
+                display: flex; /* Use flexbox */
+                justify-content: center; /* Center the cards horizontally */
+                margin-left: 20px;
+                padding: 20px;
+                flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+            }
+
+            table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            }
+
+            th {
+                background-color: #FDECEC; /* Light pink */
+                color: #970B0B; /* Darker text color for contrast */
+                border: 1px solid #970B0B; /* Border around header cells */
+            }
+
+            td, th {
+                border: 1px solid #970B0B; /* Increase border size for visibility */
+                padding: 8px;
+                text-align: center; /* Center the text in table cells */
+            }
+            canvas {
+            width: 300px !important; /* Increase graph size */
+            height: 300px !important; /* Increase graph size */
+        }
+
+        .actions {
+    text-align: center;
+    margin-top: 20px; /* Add margin to separate from user details */
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons */
+    
+}
+.action-button {
+    background-color: #970B0B; 
+    color: white; 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    height: 30px; /* Increase height for better visibility */
+    margin: 5px 0; /* Margin for spacing between buttons */
+}
+
+        .actionss {
+    text-align: center;
+    margin-top: 20px; /* Add margin to separate from user details */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons */
+}
+
+.action-buttons {
+    background-color: #970B0B; 
+    color: white; 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    height: 40px; /* Increase height for better visibility */
+    margin: 5px 0; /* Margin for spacing between buttons */
+}
+
+.action-button img {
+    width: 16px; /* Set icon size */
+    height: 16px; /* Set icon size */
+    margin-right: 5px; /* Space between icon and text */
+    vertical-align: middle; /* Align icon vertically */
+}
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo">
+        <div>
+            <img src="../pics/user.png" alt="User Profile">
+        </div>
+    </header>
+    
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('home4th.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('users4th.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progoptions4th.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption4th.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoption4th.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>    
+            <li onclick="navigateTo('feedback4th.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    
+
+    <div class="dashboard">
+        <div style="display: flex; justify-content: center; ">
+        
+            <div id="userDetails" style="margin-right: 200px; margin-top: 60px;">
+                <h5>User Details</h5>
+                <p style="font-size: 13px;"><strong>Name:</strong> <span id="userName"></span></p>
+                <p style="font-size: 13px;"><strong>Email:</strong> <span id="userEmail"></span></p>
+                <p style="font-size: 13px;"><strong>Grade Level:</strong> <span id="userGradeLevel"></span></p>
+                <p style="font-size: 13px;"><strong>Result:</strong> <span id="userResult"></span></p>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <canvas id="myChart" width="200" height="200" style="max-width: 200px; max-height: 200px;"></canvas> <!-- Reduced size -->
+                <div id="customLegend" style="margin-left: 20px;"></div>
+            </div>
+                   
+            </div>
+
+            <div class="actionss" style="margin-left: 200px; margin-top: 80px;">
+                <button class="action-buttons" onclick="printUserDetails()" style="width: 100px">
+                    Print
+                </button>
+                <button class="action-buttons" onclick="downloadUserDetails()" style="width: 100px">
+                    Download
+                </button>
+            </div>
+            
+    
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">First Name</th>
+                    <th rowspan="2">Last Name</th>
+                    <th colspan="5">Scores</th>
+                    <th rowspan="2">Result</th>
+                    <th rowspan="2">Actions</th>
+                </tr>
+                <tr>
+                    <th>Software Developer</th>
+                    <th>Network Administrator</th>
+                    <th>Database Administrator</th>
+                    <th>IT Support Specialist</th>
+                    <th>Web Developer</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>        
+    </div>
+
+    <script>
+        let chartInstance;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        function navigateTo(page) {
+            window.location.href = page; 
+        }
+    
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        function printUserDetails() {
+    const userDetailsElement = document.getElementById('userDetails');
+    const graphElement = document.getElementById('myChart');
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Print User Details</title></head><body>');
+
+    // Add user details to the new window
+    printWindow.document.write('<h1>User Details</h1>');
+    printWindow.document.write(userDetailsElement.innerHTML);
+
+    // Check if the graph is a canvas and convert it to an image
+    if (graphElement.tagName.toLowerCase() === 'canvas') {
+        const canvasImage = graphElement.toDataURL("image/png");
+        printWindow.document.write('<br><img src="' + canvasImage + '" alt="Graph" style="max-width: 100%;">');
+
+        // Extract labels and values from the chart instance
+        const chartInstance = graphElement.__chartjs__?.chart; // Ensure this correctly accesses your chart instance
+        if (chartInstance) {
+            const labels = chartInstance.data.labels; // Get the chart labels
+            const values = chartInstance.data.datasets[0].data; // Get the values from the first dataset
+            
+            // Print dataset labels and values
+            printWindow.document.write('<h2>Chart Data</h2>');
+            printWindow.document.write('<table border="1" style="border-collapse: collapse; width: 100%;">');
+            printWindow.document.write('<tr><th>Label</th><th>Value</th></tr>');
+
+            for (let i = 0; i < labels.length; i++) {
+                printWindow.document.write('<tr><td>' + labels[i] + '</td><td>' + (values[i] !== undefined ? values[i] : 'N/A') + '</td></tr>');
+            }
+            printWindow.document.write('</table><br>'); // Close the table
+        }
+    } else {
+        // If it's not a canvas (for example, an image or another element), just add it directly
+        printWindow.document.write('<br>' + graphElement.innerHTML);
+    }
+
+    printWindow.document.write('</body></html>');
+
+    // Ensure the content is fully loaded before calling print
+    printWindow.document.close(); // Close the document writing stream
+    printWindow.focus(); // Focus on the new window
+
+    // Use a slight delay to ensure all resources are loaded before printing
+    printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+    };
+}
+
+
+function downloadUserDetails() {
+    // Get the table element
+    const table = document.getElementById('userTable');
+    const rows = table.getElementsByTagName('tr');
+
+    // Prepare the CSV content
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    // Get column headings from the first row
+    const headings = Array.from(rows[0].querySelectorAll('th'))
+        .map(th => th.innerText)
+        .join(',') + '\n';
+    csvContent += headings;
+
+    const descriptions = Array.from(rows[0].querySelectorAll('th'))
+        .map((th, index) => {
+            // Add descriptions only under the "Score" header
+            if (th.innerText === 'Score') {
+                return 'Software Developer,Network Administrator,Database Administrator,IT Support Specialist,Web Developer'; // Change this to match your score columns
+            } else {
+                return ''; // Leave empty for other headers
+            }
+        })
+        .join(',') + '\n';
+    csvContent += descriptions;
+
+    // Loop through each row and get data
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the headings
+        const cols = rows[i].querySelectorAll('td');
+        const data = Array.from(cols)
+            .map(td => td.innerText)
+            .join(','); // Ensure to join the data with commas
+        csvContent += data + '\n';
+    }
+
+    // Create a link element for the download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'user_details.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+      
+        </script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+        import { Chart, registerables } from "https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.esm.js";
+
+        Chart.register(...registerables);
+
+
+const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+    
+
+         // Ensure this function is globally accessible
+    window.showDetails = async function(uid) {
+        await loadChart(uid); // Load the chart for the selected user
+        await populateUserDetails(uid); // Populate user details for the selected user
+    };
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; 
+            } else {
+            
+            }
+        });
+
+        
+
+        async function fetchUsers() {
+    const db = getFirestore(app);
+    const userCollection = collection(db, 'users'); 
+    const userResultCollection = collection(db, 'userResult4th');
+
+    // Fetch all users from the users collection
+    const userQuerySnapshot = await getDocs(userCollection);
+    
+    // Filter users based on grade level and course
+    const filteredUsers = userQuerySnapshot.docs.filter(doc => {
+        const data = doc.data();
+        return data.gradeLevel === "Fourth-year College" && data.course === "Bachelor of Science in Information Technology";
+    });
+    populateUserDetails(filteredUsers[0].id); // Use `.id` for the document ID
+
+
+    const userTableBody = document.getElementById('userTable').querySelector('tbody');
+
+    for (const userDoc of filteredUsers) {
+        const userData = userDoc.data();
+        const uid = userDoc.id;
+
+        // Fetch corresponding user result document using uid
+        const userResultDoc = await getDoc(doc(userResultCollection, uid));
+        
+        if (userResultDoc.exists()) {
+            const scores = userResultDoc.data();
+           
+            const highestScoreCategory = getHighestScoreCategory(scores);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${userData.firstName}</td>
+                <td>${userData.lastName}</td>
+                <td>${scores['1'] || 0}</td>
+                <td>${scores['2'] || 0}</td>
+                <td>${scores['3'] || 0}</td>
+                <td>${scores['4'] || 0}</td> 
+                <td>${scores['5'] || 0}</td>
+                <td>${highestScoreCategory.join(', ')}</td>
+                <td class="actions"><button class="action-button" onclick="showDetails('${uid}')">Show</button></td>
+            `;
+
+            userTableBody.appendChild(row);
+        } else {
+            
+        }
+    }
+
+    if (userTableBody.childElementCount === 0) {
+        console.log("No users found with specified criteria.");
+    }
+
+    // Return the filteredUsers array
+    return filteredUsers;
+}
+
+
+// Function to map scores to job titles
+function getHighestScoreCategory(scores) {
+    const jobTitleMapping = {
+        1: "Software Developer",
+        2: "Network Administrator",
+        3: "Database Administrator",
+        4: "IT Support Specialist",
+        5: "Web Developer"
+    };
+
+    const highestScore = Math.max(...Object.values(scores).map(Number));
+
+    const highestScoreCategories = [];
+
+    for (const [key, value] of Object.entries(scores)) {
+        if (value === highestScore && value > 1) {
+            highestScoreCategories.push(jobTitleMapping[key] || 'Unknown');
+        }
+    }
+
+    return highestScoreCategories.length > 0 ? highestScoreCategories : ['N/A'];
+}
+
+// Function to fetch and display user details, including highest result(s)
+async function populateUserDetails(uid) {
+    // Fetch user details from the 'users' collection using the uid
+    const userDoc = await getDoc(doc(db, 'users', uid));
+
+    if (userDoc.exists()) {
+        const user = userDoc.data();
+
+        // Set basic user details
+        document.getElementById('userName').textContent = user.firstName + ' ' + user.lastName;
+        document.getElementById('userEmail').textContent = user.email || 'N/A';
+        document.getElementById('userGradeLevel').textContent = user.gradeLevel || 'N/A';
+
+        // Fetch user results from the 'userResult4th' collection
+        const userResultDoc = await getDoc(doc(db, 'userResult4th', uid));
+
+        if (userResultDoc.exists()) {
+            const scores = userResultDoc.data();
+            const labelsMap = {
+                '1': 'Software Developer',
+                '2': 'Network Administrator',
+                '3': 'Database Administrator',
+                '4': 'IT Support Specialist',
+                '5': 'Web Developer'
+            };
+
+            // Find the highest score(s)
+            let highestScore = -1;
+            let highestFields = [];
+
+            for (let i = 1; i <= 5; i++) {
+                const score = scores[i.toString()] || 0; // Default to 0 if field is undefined
+                if (score > highestScore) {
+                    highestScore = score;
+                    highestFields = [labelsMap[i.toString()]]; // Reset to current highest
+                } else if (score === highestScore) {
+                    highestFields.push(labelsMap[i.toString()]); // Add if there's a tie
+                }
+            }
+
+            // Display the highest result(s)
+            document.getElementById('userResult').textContent = highestFields.length > 0 
+                ? highestFields.join(', ') 
+                : 'N/A';
+        } else {
+            console.error("User results not found for UID:", uid);
+            document.getElementById('userResult').textContent = 'N/A';
+        }
+    } else {
+        console.error("User not found with UID:", uid);
+    }
+}
+
+    window.getUserResult = async function(userId) {
+        const userResultCollection = collection(db, 'userResult4th');
+        const userResultDoc = await getDoc(doc(userResultCollection, userId));
+        return userResultDoc.exists() ? userResultDoc.data() : null;
+    };
+    async function loadChart(uid) {
+        const userResultDoc = await getDoc(doc(db, 'userResult4th', uid));
+        if (userResultDoc.exists()) {
+            const scores = userResultDoc.data();
+
+            const labelsMap = {
+                '1': 'Software Developer',
+                '2': 'Network Administrator',
+                '3': 'Database Administrator',
+                '4': 'IT Support Specialist',
+                '5': 'Web Developer'
+            };
+
+            const labels = [];
+            const values = [];
+
+            for (let i = 1; i <= 5; i++) {
+                const fieldValue = scores[i.toString()] || 0;
+                labels.push(labelsMap[i.toString()]);
+                values.push(fieldValue);
+            }
+
+            // Create pie chart
+            const ctx = document.getElementById('myChart').getContext('2d');
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            chartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'User Results',
+                        data: values,
+                        backgroundColor: [
+                            '#B33030', 
+                            '#C94C4C', 
+                            '#D66B6B', 
+                            '#E8A4A4', 
+                            '#F5C4C4'
+                        ],
+                        
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'User Results Overview',
+                            font: {
+                                size: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateCustomLegend(labels, values);
+        } else {
+            console.error("User results not found for UID:", uid);
+        }
+    }
+
+function updateCustomLegend(labels, values) {
+    const customLegend = document.getElementById('customLegend');
+    customLegend.innerHTML = ''; // Clear previous legend
+    labels.forEach((label, index) => {
+        const value = values[index];
+        const legendItem = document.createElement('div');
+        legendItem.style.color = chartInstance.data.datasets[0].backgroundColor[index]; // Match the color
+        legendItem.style.fontSize = '16px'; // Increase font size for visibility
+        legendItem.textContent = `${label}: ${value}`;
+        customLegend.appendChild(legendItem);
+    });
+}
+
+window.onload = async () => {
+    const users = await fetchUsers(); // Fetch users
+    if (users && users.length > 0) {
+        const firstUser = users[0];
+        await loadChart(firstUser.id); // Call loadChart with the UID of the first user
+        populateUserDetails(firstUser.id); // Pass the correct UID
+    } else {
+        console.log("No users available to update the chart.");
+    }
+};
+
+</script>
+</body>
+</html>

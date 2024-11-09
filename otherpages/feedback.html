@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+        import { getFirestore, collection, query, where, getDocs, deleteDoc, doc, updateDoc, deleteField, getDoc } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js';
+        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentFeedbackId = '';
+        let currentFeedbackIndex = '';
+
+        async function fetchFeedback() {
+    const feedbackTableBody = document.getElementById('feedbackTableBody');
+    feedbackTableBody.innerHTML = '';
+
+    const feedbackRef = collection(db, 'feedback');
+    const feedbackQuery = query(feedbackRef, where('gradeLevel', 'in', ['Grade 10', 'Grade 12']));
+    const feedbackSnapshot = await getDocs(feedbackQuery);
+
+    let index = 1;
+
+    feedbackSnapshot.forEach((feedbackDoc) => {
+        const feedbackData = feedbackDoc.data();
+        const feedbackId = feedbackDoc.id;
+        const gradeLevel = feedbackData.gradeLevel || 'N/A';
+
+        let feedbackIndex = 1;
+        while (feedbackData[`feedback${feedbackIndex}`]) {
+            const feedback = feedbackData[`feedback${feedbackIndex}`] || 'N/A';
+            const starRating = feedbackData[`starRating${feedbackIndex}`] !== undefined
+                ? feedbackData[`starRating${feedbackIndex}`]
+                : 'N/A';
+
+            let timestamp = 'N/A';
+            const timestampField = feedbackData[`timestamp${feedbackIndex}`];
+            if (timestampField && timestampField.seconds) {
+                timestamp = new Date(timestampField.seconds * 1000).toLocaleString();
+            }
+
+            // Check for a reply, or set to "No reply" if none exists
+            const reply = feedbackData[`reply${feedbackIndex}`] || 'No reply';
+
+            const row = `
+                <tr>
+                    <td style="text-align: center">${index++}</td>
+                    <td>${feedbackId}</td>
+                    <td>${gradeLevel}</td>
+                    <td style="text-align: center">${starRating}</td>
+                    <td>${feedback}</td>
+                    <td>${timestamp}</td>
+                    <td>${reply}</td> <!-- New Reply column -->
+                    <td style="text-align: center">
+                        <div style="display: inline-flex; gap: 8px; align-items: center;">
+                            <button style="width: 30px; height: 30px; cursor: pointer;" id="reply" onclick="openReplyModal('${feedbackId}', ${feedbackIndex})">
+                                <img src="../pics/reply.png" alt="Reply" />
+                            </button>
+                            <img src="../pics/remove.png" alt="Remove" style="width: 30px; height: 30px; cursor: pointer;" onclick="removeFeedback('${feedbackId}', ${feedbackIndex})" />
+                        </div>
+                    </td>
+                </tr>
+            `;
+            feedbackTableBody.innerHTML += row;
+            feedbackIndex++;
+        }
+    });
+}
+
+
+        function openReplyModal(feedbackId, feedbackIndex) {
+            currentFeedbackId = feedbackId;
+            currentFeedbackIndex = feedbackIndex;
+            document.getElementById('replyModal').style.display = 'block';
+        }
+
+        async function saveReply() {
+            const replyText = document.getElementById('replyText').value;
+            const fieldToUpdate = `reply${currentFeedbackIndex}`;
+
+            const feedbackDocRef = doc(db, 'feedback', currentFeedbackId);
+            await updateDoc(feedbackDocRef, {
+                [fieldToUpdate]: replyText
+            });
+
+            document.getElementById('replyModal').style.display = 'none';
+            document.getElementById('replyText').value = '';
+            fetchFeedback();
+        }
+
+        function closeModal() {
+            document.getElementById('replyModal').style.display = 'none';
+            document.getElementById('replyText').value = '';
+        }
+
+        async function removeFeedback(feedbackId, feedbackIndex) {
+            const feedbackDocRef = doc(db, 'feedback', feedbackId);
+            const fieldsToDelete = {
+                [`feedback${feedbackIndex}`]: deleteField(),
+                [`starRating${feedbackIndex}`]: deleteField(),
+                [`timestamp${feedbackIndex}`]: deleteField()
+            };
+            await updateDoc(feedbackDocRef, fieldsToDelete);
+            fetchFeedback();
+        }
+
+        window.removeFeedback = removeFeedback;
+        window.openReplyModal = openReplyModal;
+        window.saveReply = saveReply;
+        window.closeModal = closeModal;
+        window.onload = fetchFeedback;
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2; /* Ensure header stays on top */
+        }
+        header img {
+                    height: 35px;
+                }
+
+                header div {
+                    display: flex;
+                    align-items: center;
+                }
+
+                header button {
+                    margin-left: 15px;
+                    padding: 8px 12px;
+                    background-color: white;
+                    color: #970B0B;
+                    border: 2px solid #970B0B;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                header button:hover {
+                    background-color: #f0f0f0;
+                }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FDECEC;
+            color: #970B0B;
+            overflow-x: hidden;
+            transition: width 0.3s ease;
+            padding-top: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        nav.open {
+            width: 250px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        nav ul li img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        nav ul li:hover {
+            background-color: #F3F3F3;
+            border-left: 5px solid #970B0B;
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        .table-container {
+            margin: 0 20px; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #970B0B;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #FDECEC;
+            color: #970B0B;
+        }
+        #replyModal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #replyModalContent {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            position: relative;
+            margin: auto;
+            top: 20%;
+        }
+
+        .closeBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #replyText {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        #replyModal button {
+            padding: 10px 20px;
+            background-color: #970B0B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #reply{
+            background-color: #970B0B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileIS.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px;">
+        </div>
+    </header>
+
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('homeg10.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('usersg10.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progg10.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoptiongis.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>            
+            <li onclick="navigateTo('feedback.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    <div class="table-container">
+        <table id="feedbackTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Feedback ID</th>
+                    <th>Grade Level</th>
+                    <th>Star Rating</th>
+                    <th>Feedback</th>
+                    <th>Date</th>
+                    <th>Reply</th> <!-- New Reply column header -->
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="feedbackTableBody"></tbody>
+        </table>        
+    </div>
+
+     <!-- Reply Modal -->
+     <div id="replyModal">
+        <div id="replyModalContent">
+            <span class="closeBtn" onclick="closeModal()">×</span>
+            <h3>Reply to Feedback</h3>
+            <textarea id="replyText" placeholder="Type your reply here..."></textarea>
+            <button onclick="saveReply()">Save</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+</body>
+</html>

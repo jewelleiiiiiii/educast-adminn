@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2; /* Ensure header stays on top */
+        }
+        header img {
+                    height: 35px;
+                }
+
+                header div {
+                    display: flex;
+                    align-items: center;
+                }
+
+                header button {
+                    margin-left: 15px;
+                    padding: 8px 12px;
+                    background-color: white;
+                    color: #970B0B;
+                    border: 2px solid #970B0B;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                header button:hover {
+                    background-color: #f0f0f0;
+                }
+
+        #searchInput {
+            width: 100%; /* Full width to match the table */
+            max-width: 1200px; /* Max width to prevent it from getting too wide */
+            padding: 10px;
+            border: 2px solid #970B0B;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        nav {
+                width: 0;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #FDECEC;
+                color: #970B0B;
+                overflow-x: hidden;
+                transition: width 0.3s ease;
+                padding-top: 20px;
+                box-sizing: border-box;
+                z-index: 1;
+            }
+
+            nav.open {
+                width: 250px;
+            }
+
+            nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            nav ul li {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            nav ul li img {
+                width: 24px;
+                height: 24px;
+                margin-right: 15px;
+            }
+
+            nav ul li:hover {
+                background-color: #F3F3F3;
+                border-left: 5px solid #970B0B;
+            }
+        
+        .dashboard {
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center the cards horizontally */
+            margin-left: 20px;
+            padding: 20px;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                margin-left: 0;
+            }
+        }
+
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #970B0B;
+    padding: 10px;
+    vertical-align: middle; /* Vertically center the content */
+}
+
+th {
+    background-color: #FDECEC;
+    color: #970B0B;
+}
+
+/* Align the 'Questions' column to the left */
+td:first-child {
+    text-align: left;
+}
+
+/* Center the 'Category' and 'Actions' columns */
+td:nth-child(2), .action-buttons {
+    text-align: center;
+}
+
+/* Center action icons */
+.action-buttons {
+    justify-content: center; /* Center the action icons horizontally */
+    align-items: center; /* Center the action icons vertically */
+}
+
+.action-buttons img {
+    width: 20px;
+    cursor: pointer;
+    margin: 0 5px; /* Add margin between the icons */
+}
+
+.modal {
+            display: none;
+            position: fixed;
+            z-index: 3;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #970B0B;
+            width: 400px;
+            border-radius: 5px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #970B0B;
+        }
+
+        .modal-header span {
+            cursor: pointer;
+            font-size: 20px;
+            color: #970B0B;
+        }
+
+        .modal-body {
+            margin-top: 15px;
+        }
+
+        .modal-body label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-body input {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #970B0B;
+            border-radius: 5px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            background-color: #970B0B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-footer button:hover {
+            background-color: #c60e0e;
+        }
+
+
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Protect page: Redirect if not logged in
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; // Replace with your landing page
+            }
+        });
+    
+
+        let currentQuestionNumber; // Define a global variable to store the question number
+
+        async function fetchQuestions() {
+    const strandDocRef = doc(db, 'jobcontent', 'Instrumentation Engineer'); 
+    const strandDoc = await getDoc(strandDocRef); 
+
+    if (strandDoc.exists()) {
+        const fields = strandDoc.data();
+        const questionsTableBody = document.querySelector('#questionsTable tbody');
+        questionsTableBody.innerHTML = ""; // Clear any previous content
+
+        // Custom sort function to handle fields with decimals
+        const sortedFields = Object.entries(fields).sort(([a], [b]) => {
+            if (a === "keyword") return 1;
+            if (b === "keyword") return -1;
+
+            const [intA, decA] = a.split('.').map(Number);
+            const [intB, decB] = b.split('.').map(Number);
+
+            if (intA !== intB) return intA - intB; // Compare integer parts
+            return (decA || 0) - (decB || 0); // Compare decimal parts, defaulting to 0 if missing
+        });
+
+        // Append each field to the table
+        sortedFields.forEach(([fieldId, fieldValue], index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="text-align: center">${fieldId}</td> <!-- Field ID cell -->
+                <td style="text-align: justify">${fieldValue || 'N/A'}</td> <!-- Field Value cell -->
+                <td class="action-buttons">
+                    <img src="../pics/edit.png" alt="Edit" onclick="editField('${fieldId}')">
+                </td>
+            `;
+            questionsTableBody.appendChild(row);
+        });
+    } else {
+        console.error("The document 'gas' does not exist in 'jobcontent'!");
+    }
+}
+
+
+
+async function saveChanges(questionNumber) {
+    // Track the current question being edited
+    currentQuestionNumber = questionNumber;
+
+    try {
+        const strandDocRef = doc(db, 'jobcontent', 'Instrumentation Engineer');
+
+        // Retrieve updated content from the input field
+        const updatedContent = document.getElementById('editContent').value;
+
+        // Update the specified question field with new content
+        await updateDoc(strandDocRef, {
+            [questionNumber]: updatedContent
+        });
+
+        alert('Content updated successfully!');
+        closeModal();
+        
+        // Refresh displayed questions after the update
+        await fetchQuestions();
+    } catch (error) {
+        console.error("Error updating content:", error); // Log detailed error
+        alert("Failed to update content. Please try again.");
+    }
+}
+
+// Expose saveChanges function to the global scope
+window.saveChanges = saveChanges;
+
+    async function editField(fieldId) {
+    try {
+        const strandDocRef = doc(db, 'jobcontent', 'Instrumentation Engineer');
+        const strandDoc = await getDoc(strandDocRef);
+
+        if (strandDoc.exists()) {
+            const fields = strandDoc.data();
+            const fieldContent = fields[fieldId] || 'N/A';
+            console.log(fieldContent); // Use console.log to output content to the console
+
+            document.getElementById('editNumber').value = fieldId;
+            document.getElementById('editContent').value = fieldContent;
+            
+            document.getElementById('editModal').style.display = 'flex';
+        } else {
+            console.error("The document 'gas' does not exist in 'jobcontent'!");
+        }
+    } catch (error) {
+        console.error("Error fetching field content:", error);
+    }
+}
+
+// Make editField globally accessible
+window.editField = editField;
+
+
+        window.onload = async () => {
+            await fetchQuestions(); // Fetch questions on page load
+        };
+    
+    </script>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileIS.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px;">
+        </div>
+    </header>
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('home4th.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('users4th.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progoptions4th.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption4th.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoption4th.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>    
+            <li onclick="navigateTo('feedback4th.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+     <div class="dashboard">
+        <div class="search-container">
+            <input type="text" id="searchInput" style="width: 1200px;" placeholder="Search Questions..." onkeyup="filterTable()">
+        </div>
+        
+            <table id="questionsTable">
+                <thead>
+                    <tr>
+                        <th>#</th> <!-- Numbering column -->
+                        <th>Content</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Questions will be populated here -->
+                </tbody>
+            </table>            
+    </div>
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Content</h2>
+                <span onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="editNumber">#</label>
+                <input type="text" id="editNumber" disabled>
+                <label for="editContent">Content</label>
+                <textarea id="editContent" style="height: 200px;width: 390px;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button onclick="saveChanges(document.getElementById('editNumber').value)">Save</button>
+
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        
+        function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        // Navigate to a new page
+        function navigateTo(page) {
+            window.location.href = page; // Change the page
+        }
+    
+        // Detect clicks outside the sidebar and close it if open
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+
+function editQuestion(questionNumber) {
+    currentQuestionNumber = questionNumber; // Set the global variable when editing a question
+
+    const question = document.querySelector(`#questionsTable tbody tr:nth-child(${questionNumber}) td:first-child`).innerText;
+    const category = document.querySelector(`#questionsTable tbody tr:nth-child(${questionNumber}) td:nth-child(2)`).innerText;
+
+    document.getElementById('editQuestion').value = question;
+    document.getElementById('editCategory').value = category;
+
+    const modal = document.getElementById('editModal');
+    modal.style.display = 'flex'; // Show the modal
+}
+
+        function closeModal() {
+            const modal = document.getElementById('editModal');
+            modal.style.display = 'none';
+        }
+
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+        function filterTable() {
+        const filter = document.getElementById('searchInput').value.toLowerCase();
+        const table = document.getElementById('questionsTable');
+        const tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
+            const tdQuestion = tr[i].getElementsByTagName('td')[1];
+            const tdCategory = tr[i].getElementsByTagName('td')[2];
+            if (tdQuestion || tdCategory) {
+                const txtValueQuestion = tdQuestion.textContent || tdQuestion.innerText;
+                const txtValueCategory = tdCategory.textContent || tdCategory.innerText;
+                if (txtValueQuestion.toLowerCase().indexOf(filter) > -1 || txtValueCategory.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }       
+        }
+    }
+    window.logout = function() {
+    signOut(auth).then(() => {
+        // Adjust the path according to your project structure
+        window.location.href = '../landing.html'; // Navigate one level up to access landing.html
+        // or window.location.href = 'path/to/landing.html'; // Use the correct relative path
+    });
+};
+
+</script>
+    
+    
+</body>
+</html>

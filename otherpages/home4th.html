@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+        import { Chart, registerables } from 'https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.esm.js';
+    
+        Chart.register(...registerables); // Register all chart components
+
+    const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+     // Define logout function
+     window.logout = function() {
+            signOut(auth).then(() => {
+                window.location.href = '../landing.html';
+            }).catch((error) => {
+                console.error('Sign out error:', error);
+            });
+        };
+        // Fetch user data and calculate counts
+async function fetchUserData() {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    let totalUsersCount = 0;
+    let casCount = 0;
+    let cetCount = 0;
+    let cicsCount = 0;
+
+    // Course counts
+    const courseCounts = {
+        "Bachelor of Science in Criminology": 0,
+        "Bachelor of Science in Psychology": 0,
+        "Bachelor of Science in Information Technology": 0,
+        "Bachelor of Automotive Engineering Technology": 0,
+        "Bachelor of Civil Engineering Technology": 0,
+        "Bachelor of Computer Engineering Technology": 0,
+        "Bachelor of Drafting Engineering Technology": 0,
+        "Bachelor of Electrical Engineering Technology": 0,
+        "Bachelor of Electronics Engineering Technology": 0,
+        "Bachelor of Mechanical Engineering Technology": 0,
+        "Bachelor of Mechatronics Engineering Technology": 0,
+        "Bachelor of Food Engineering Technology": 0,
+    };
+
+    // Iterate over each user document
+    usersSnapshot.forEach(doc => {
+        const userData = doc.data();
+        if (userData.gradeLevel === "Fourth-year College") {
+            totalUsersCount++;
+
+            // Count based on course
+            switch (userData.course) {
+                case "Bachelor of Science in Psychology":
+                case "Bachelor of Science in Criminology":
+                    casCount++;
+                    courseCounts[userData.course]++;
+                    break;
+                case "Bachelor of Automotive Engineering Technology":
+                case "Bachelor of Civil Engineering Technology":
+                case "Bachelor of Computer Engineering Technology":
+                case "Bachelor of Drafting Engineering Technology":
+                case "Bachelor of Electrical Engineering Technology":
+                case "Bachelor of Electronics Engineering Technology":
+                case "Bachelor of Mechanical Engineering Technology":
+                case "Bachelor of Mechatronics Engineering Technology":
+                case "Bachelor of Food Engineering Technology":
+                    cetCount++;
+                    courseCounts[userData.course]++;
+                    break;
+                case "Bachelor of Science in Information Technology":
+                    cicsCount++;
+                    courseCounts[userData.course]++;
+                    break;
+            }
+        }
+    });
+
+    // Update the DOM with the counts
+    document.getElementById("totalUsersCount").innerText = totalUsersCount;
+    document.getElementById("totalUsersCountCAS").innerText = casCount;
+    document.getElementById("totalUsersCountCET").innerText = cetCount;
+    document.getElementById("totalUsersCountCICS").innerText = cicsCount;
+
+    // Create the course distribution chart
+    createCourseDistributionChart(courseCounts);
+}
+
+// Create a bar chart for course distribution
+function createCourseDistributionChart(courseCounts) {
+    const ctx = document.getElementById('courseDistributionChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(courseCounts),
+            datasets: [{
+                label: 'Number of Users',
+                data: Object.values(courseCounts),
+                backgroundColor: 'rgba(151, 11, 11, 0.5)',
+                borderColor: 'rgba(151, 11, 11, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Call the fetch function when the script loads
+fetchUserData();
+
+
+        // Listen for auth state changes and fetch user data when logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                fetchUserData(); // Fetch user data only if logged in
+            } else {
+                window.location.href = 'landing.html'; // Redirect if not logged in
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card.wide {
+            width: 415px;
+            height: 300px;
+            margin: 20px;
+            position: relative;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        header img {
+            height: 35px;
+        }
+
+        header div {
+            display: flex;
+            align-items: center;
+        }
+
+        header button {
+            margin-left: 15px;
+            padding: 8px 12px;
+            background-color: white;
+            color: #970B0B;
+            border: 2px solid #970B0B;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background-color: #f0f0f0;
+        }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FDECEC;
+            color: #970B0B;
+            overflow-x: hidden;
+            transition: width 0.3s ease;
+            padding-top: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        nav.open {
+            width: 250px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        nav ul li img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        nav ul li:hover {
+            background-color: #F3F3F3;
+            border-left: 5px solid #970B0B;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            margin-left: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 250px;
+            height: 150px;
+            border: 2px solid #970B0B;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            color: #970B0B;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h1 {
+            margin: 20px 0 10px;
+        }
+
+        .card2 {
+            width: 600px;
+            height: 150px;
+            border: 2px solid #970B0B;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            color: #970B0B;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card2 h1 {
+            margin: 10px 0 10px;
+        }
+        
+        .card3 {
+            width: 950px;
+            height: 500px; /* Increased height for better chart visibility */
+            border: 2px solid #970B0B;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            color: #970B0B;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card3 h1 {
+            margin: 10px 0 10px;
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                margin-left: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileMalvar.html')"style="width:35px; height:30px; border-radius:50%; margin-left:10px; cursor: pointer;">
+        </div>
+    </header>
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('home4th.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('users4th.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progoptions4th.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption4th.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoption4th.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>    
+            <li onclick="navigateTo('feedback4th.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="dashboard">
+        <div class="card">
+            <h1 id="totalUsersCount" style="font-size: 90px; margin-bottom: 0; margin-top: 0;">--</h1>
+            <p>FOURTH-YEAR USERS</p>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 600px;" class="card2">
+            <div style="text-align: center; margin-left: 20px;">
+                <h1 id="totalUsersCountCAS" style="font-size: 80px;">--</h1>
+                <p>CAS USERS</p>
+            </div>
+            <div style="text-align: center;">
+                <h1 id="totalUsersCountCET" style="font-size: 80px;">--</h1>
+                <p>CET USERS</p>
+            </div>
+            <div style="text-align: center; margin-right: 20px;">
+                <h1 id="totalUsersCountCICS" style="font-size: 80px;">--</h1>
+                <p>CICS USERS</p>
+            </div>
+        </div>
+        <div class="card3">
+            <h1>User Course Distribution</h1>
+            <div style="height: 450px; width: 900px;">
+            <canvas id="courseDistributionChart"></canvas></div>
+        </div>
+        
+    </div>
+    
+    <script>
+        function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        // Navigate to a new page
+        function navigateTo(page) {
+            window.location.href = page; // Change the page
+        }
+    
+        // Detect clicks outside the sidebar and close it if open
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                background-color: #f8f9fa;
+            }
+
+            .burger {
+                font-size: 20px; /* Keep it small */
+                cursor: pointer;
+                background-color: transparent;
+                border: none;
+                color: #970B0B;
+                margin-right: 10px; /* Small space to the right */
+            }
+            header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2; /* Ensure header stays on top */
+        }
+        header img {
+                    height: 35px;
+                }
+
+                header div {
+                    display: flex;
+                    align-items: center;
+                }
+
+                header button {
+                    margin-left: 15px;
+                    padding: 8px 12px;
+                    background-color: white;
+                    color: #970B0B;
+                    border: 2px solid #970B0B;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                header button:hover {
+                    background-color: #f0f0f0;
+                }
+
+            nav {
+                width: 0;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #FDECEC;
+                color: #970B0B;
+                overflow-x: hidden;
+                transition: width 0.3s ease;
+                padding-top: 20px;
+                box-sizing: border-box;
+                z-index: 1;
+            }
+
+            nav.open {
+                width: 250px;
+            }
+
+            nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            nav ul li {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            nav ul li img {
+                width: 24px;
+                height: 24px;
+                margin-right: 15px;
+            }
+
+            nav ul li:hover {
+                background-color: #F3F3F3;
+                border-left: 5px solid #970B0B;
+            }
+            .dashboard {
+                display: flex; /* Use flexbox */
+                justify-content: center; /* Center the cards horizontally */
+                margin-left: 20px;
+                padding: 20px;
+                flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+            }
+
+            table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            }
+
+            th {
+                background-color: #FDECEC; /* Light pink */
+                color: #970B0B; /* Darker text color for contrast */
+                border: 1px solid #970B0B; /* Border around header cells */
+            }
+
+            td, th {
+                border: 1px solid #970B0B; /* Increase border size for visibility */
+                padding: 8px;
+                text-align: center; /* Center the text in table cells */
+            }
+            canvas {
+            width: 300px !important; /* Increase graph size */
+            height: 300px !important; /* Increase graph size */
+        }
+
+        .actions {
+    text-align: center;
+    margin-top: 20px; /* Add margin to separate from user details */
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons */
+    
+}
+.action-button {
+    background-color: #970B0B; 
+    color: white; 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    height: 30px; /* Increase height for better visibility */
+    margin: 5px 0; /* Margin for spacing between buttons */
+}
+
+        .actionss {
+    text-align: center;
+    margin-top: 20px; /* Add margin to separate from user details */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons */
+}
+
+.action-buttons {
+    background-color: #970B0B; 
+    color: white; 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    height: 40px; /* Increase height for better visibility */
+    margin: 5px 0; /* Margin for spacing between buttons */
+}
+
+.action-button img {
+    width: 16px; /* Set icon size */
+    height: 16px; /* Set icon size */
+    margin-right: 5px; /* Space between icon and text */
+    vertical-align: middle; /* Align icon vertically */
+}
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileIS.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px;">
+        </div>
+    </header>
+    
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('homeg10.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('usersg10.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progg10.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoptiongis.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>            
+            <li onclick="navigateTo('feedback.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    
+
+    <div class="dashboard">
+        <div style="display: flex; justify-content: center; ">
+        
+            <div id="userDetails" style="margin-right: 200px; margin-top: 60px;">
+                <h5>User Details</h5>
+                <p style="font-size: 13px;"><strong>Name:</strong> <span id="userName"></span></p>
+                <p style="font-size: 13px;"><strong>Email:</strong> <span id="userEmail"></span></p>
+                <p style="font-size: 13px;"><strong>Grade Level:</strong> <span id="userGradeLevel"></span></p>
+                <p style="font-size: 13px;"><strong>Result:</strong> <span id="userResult"></span></p>
+            </div>
+            <div>
+                <canvas id="myChart"></canvas> <!-- Pie chart -->
+            </div>
+            </div>
+
+            <div class="actionss" style="margin-left: 200px; margin-top: 80px;">
+                <button class="action-buttons" onclick="printUserDetails()" style="width: 50px;">
+                    <img src="../pics/print.png" alt="Print" style="width: 20px; height: 20px;">
+                </button>
+                <button class="action-buttons" onclick="downloadUserDetails()" style="width: 50px;">
+                    <img src="../pics/download.png" alt="Download" style="width: 20px; height: 20px;">
+                </button>
+            </div>
+            
+            
+    
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">First Name</th>
+                    <th rowspan="2">Last Name</th>
+                    <th colspan="6">Scores</th>
+                    <th rowspan="2">Result</th>
+                    <th rowspan="2">Actions</th>
+                </tr>
+                <tr>
+                    <th>Realistic</th>
+                    <th>Investigative</th>
+                    <th>Artistic</th>
+                    <th>Social</th>
+                    <th>Enterprising</th>
+                    <th>Conventional</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>        
+    </div>
+
+    <script>
+        let chartInstance;
+        function toggleSidebar() {
+            console.log("Toggling sidebar");
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        function navigateTo(page) {
+            window.location.href = page; 
+        }
+    
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+        function printUserDetails() {
+    const userDetailsElement = document.getElementById('userDetails');
+    const graphElement = document.getElementById('myChart'); // Correcting to the actual ID of the canvas
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Print User Details</title></head><body>');
+
+    // Add user details to the new window
+    printWindow.document.write('<h1>User Details</h1>');
+    printWindow.document.write(userDetailsElement.innerHTML);
+
+    // Check if the graph is a canvas and convert it to an image
+    if (graphElement.tagName.toLowerCase() === 'canvas') {
+        const canvasImage = graphElement.toDataURL("image/png");
+        printWindow.document.write('<br><img src="' + canvasImage + '" alt="Graph" style="max-width: 100%;">');
+    } else {
+        // If it's not a canvas (for example, an image or another element), just add it directly
+        printWindow.document.write('<br>' + graphElement.innerHTML);
+    }
+
+    printWindow.document.write('</body></html>');
+
+    // Ensure the content is fully loaded before calling print
+    printWindow.document.close(); // Close the document writing stream
+    printWindow.focus(); // Focus on the new window
+
+    // Use a slight delay to ensure all resources are loaded before printing
+    printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+    };
+}
+
+function downloadUserDetails() {
+    // Get the table element
+    const table = document.getElementById('userTable');
+    const rows = table.getElementsByTagName('tr');
+
+    // Prepare the CSV content
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    // Get column headings from the first row
+    const headings = Array.from(rows[0].querySelectorAll('th'))
+        .map(th => th.innerText)
+        .join(',') + '\n';
+    csvContent += headings;
+
+    // Add a second row of headers (Realistic, Investigative, Artistic, Social, Enterprising, Conventional)
+    const descriptions = Array.from(rows[0].querySelectorAll('th'))
+        .map((th, index) => {
+            // Add descriptions only under the "Score" header
+            if (th.innerText === 'Score') {
+                return 'Realistic,Investigative,Artistic,Social,Enterprising,Conventional'; // Change this to match your score columns
+            } else {
+                return ''; // Leave empty for other headers
+            }
+        })
+        .join(',') + '\n';
+    csvContent += descriptions;
+
+    // Loop through each row and get data
+    for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the headings
+        const cols = rows[i].querySelectorAll('td');
+        const data = Array.from(cols)
+            .map(td => td.innerText)
+            .join(','); // Ensure to join the data with commas
+        csvContent += data + '\n';
+    }
+
+    // Create a link element for the download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'user_details.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+        function getChartData() {
+    const chart = chartInstance; // Assuming you have a global variable for your chart instance
+
+    // Get legend labels
+    const labels = chart.data.labels.join(", "); // Join labels with a comma
+    // Get dataset values
+    const datasetValues = chart.data.datasets[0].data.join(", "); // Join dataset values with a comma
+
+    return `${labels}; ${datasetValues}`; // Return formatted string of labels and values
+}
+
+
+        window.onload = function() {
+            // Example chart initialization
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'],
+                    datasets: [{
+                        label: 'Scores',
+                        data: [12, 19, 3, 5, 2, 3], // Example data
+                        backgroundColor: [
+                            'rgba(179, 48, 48, 1)',    // #B33030
+                            'rgba(201, 76, 76, 1)',    // #C94C4C
+                            'rgba(214, 107, 107, 1)',  // #D66B6B
+                            'rgba(232, 164, 164, 1)',  // #E8A4A4
+                            'rgba(245, 196, 196, 1)'   // #F5C4C4
+                        ],
+                        borderColor: [
+                            'rgba(179, 48, 48, 1)',    // #B33030
+                            'rgba(201, 76, 76, 1)',    // #C94C4C
+                            'rgba(214, 107, 107, 1)',  // #D66B6B
+                            'rgba(232, 164, 164, 1)',  // #E8A4A4
+                            'rgba(245, 196, 196, 1)'   // #F5C4C4
+                        ],
+
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Scores Distribution'
+                        }
+                    }
+                }
+            });
+        };
+        </script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+        import { Chart, registerables } from "https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.esm.js";
+
+        Chart.register(...registerables);
+
+
+const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+    
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; 
+            } else {
+            
+            }
+        });
+        window.logout = function() {
+    signOut(auth).then(() => {
+        // Adjust the path according to your project structure
+        window.location.href = '../landing.html'; // Navigate one level up to access landing.html
+        // or window.location.href = 'path/to/landing.html'; // Use the correct relative path
+    });
+};
+
+        async function fetchUsers() {
+    const db = getFirestore(app);
+    const userCollection = collection(db, 'users'); 
+    const userResultCollection = collection(db, 'userResultG10');
+
+    // Fetch users with Grade 10
+    const userQuerySnapshot = await getDocs(userCollection);
+    const usersGrade10 = userQuerySnapshot.docs.filter(doc => doc.data().gradeLevel === "Grade 10");
+
+    console.log("Fetched users with Grade 10:", usersGrade10.length);
+
+    const userTableBody = document.getElementById('userTable').querySelector('tbody');
+    
+    for (const userDoc of usersGrade10) {
+        const userData = userDoc.data();
+        const uid = userDoc.id;
+
+        console.log("User Data:", userData); // Log user data for debugging
+
+        // Fetch corresponding user result document using uid
+        const userResultDoc = await getDoc(doc(userResultCollection, uid));
+        
+        if (userResultDoc.exists()) {
+            const scores = userResultDoc.data();
+            console.log("Scores Data:", scores); // Log scores for debugging
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${userData.firstName}</td>
+                <td>${userData.lastName}</td>
+                <td>${scores.Realistic || 0}</td>
+                <td>${scores.Investigative || 0}</td>
+                <td>${scores.Artistic || 0}</td>
+                <td>${scores.Social || 0}</td>
+                <td>${scores.Enterprising || 0}</td>
+                <td>${scores.Conventional || 0}</td>
+                <td>${getHighestScoreCategory(scores).join(', ')}</td>
+                <td class="actions"><button class="action-button"onclick="showDetails('${uid}')">Show</button></td>
+            `;
+
+            userTableBody.appendChild(row);
+        } else {
+            console.warn(`No results found for user ID: ${uid}`);
+        }
+    }
+
+    if (userTableBody.childElementCount === 0) {
+        console.log("No users found with gradeLevel 'Grade 10'.");
+    }
+
+    // Return the usersGrade10 array
+    return usersGrade10;
+}
+
+
+function getHighestScoreCategory(scores) {
+    const highestScores = [];
+    let maxScore = -1;
+
+    // Check for scores and calculate highest scores
+    for (const [category, score] of Object.entries(scores)) {
+        if (score > maxScore) {
+            maxScore = score;
+            highestScores.length = 0; // Clear the array
+            highestScores.push(category);
+        } else if (score === maxScore) {
+            highestScores.push(category);
+        }
+    }
+
+    return highestScores;
+}
+window.showDetails = async function(userId) {
+    const userResultDoc = await getUserResult(userId);
+    const userDoc = await getUserInfo(userId);  // Fetch user info
+
+    if (userResultDoc && userDoc) {
+        updateChart(userResultDoc);
+        updateUserDetails(userDoc, userResultDoc);
+    }
+};
+
+// Fetch user information from the 'users' collection
+window.getUserInfo = async function(userId) {
+    const userCollection = collection(db, 'users');
+    const userDoc = await getDoc(doc(userCollection, userId));
+    return userDoc.exists() ? userDoc.data() : null;
+};
+
+function updateUserDetails(user, scores) {
+    if (user) {
+        document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('userEmail').textContent = user.email || "N/A";
+        document.getElementById('userGradeLevel').textContent = user.gradeLevel || "N/A";
+        document.getElementById('userResult').textContent = getHighestScoreCategory(scores).join(', ');
+    } else {
+        // Handle the case where user is null or undefined
+        console.warn("User details are not available.");
+        document.getElementById('userName').textContent = "N/A";
+        document.getElementById('userEmail').textContent = "N/A";
+        document.getElementById('userGradeLevel').textContent = "N/A";
+        document.getElementById('userResult').textContent = "N/A";
+    }
+}
+
+
+    window.getUserResult = async function(userId) {
+        const userResultCollection = collection(db, 'userResultG10');
+        const userResultDoc = await getDoc(doc(userResultCollection, userId));
+        return userResultDoc.exists() ? userResultDoc.data() : null;
+    };
+
+    function updateChart(scores) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const data = {
+        labels: ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'],
+        datasets: [{
+            label: 'Scores',
+            data: [
+                scores.Realistic || 0,
+                scores.Investigative || 0,
+                scores.Artistic || 0,
+                scores.Social || 0,
+                scores.Enterprising || 0,
+                scores.Conventional || 0,
+            ],
+            backgroundColor: [
+    'rgba(179, 48, 48, 1)',    // #B33030 (Dark Red)
+    'rgba(201, 76, 76, 1)',    // #C94C4C (Red)
+    'rgba(214, 107, 107, 1)',  // #D66B6B (Light Red)
+    'rgba(232, 164, 164, 1)',  // #E8A4A4 (Lighter Red)
+    'rgba(245, 196, 196, 1)',  // #F5C4C4 (Very Light Red)
+    'rgba(255, 224, 224, 1)'   // #FFE0E0 (Pale Red)
+],
+
+
+            hoverOffset: 4
+        }]
+    };
+
+    // Check if all scores are zero
+    const allZero = data.datasets[0].data.every(score => score === 0);
+    
+    if (allZero) {
+        alert("No valid scores available to display.");
+        return;
+    }
+
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'left',
+                    labels: {
+                        font: {
+                            size: 13 // Set font size for legend
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'User Scores',
+                    font: {
+                        size: 20 // Set font size for title
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `${tooltipItem.label}: ${tooltipItem.raw}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+window.onload = async () => {
+    try {
+        const users = await fetchUsers(); // Fetch users only once
+
+        if (users && users.length > 0) {
+            const firstUserId = users[0].id; // Get the first user's ID
+            const userResultDoc = await getUserResult(firstUserId);
+            const userDoc = await getUserInfo(firstUserId);
+            
+            if (userResultDoc && userDoc) {
+                updateChart(userResultDoc);
+                updateUserDetails(userDoc, userResultDoc);
+            } else {
+                console.log("User result or user info not found.");
+            }
+        } else {
+            console.log("No users available to update the chart.");
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+    }
+};
+
+    </script>
+
+</script>
+</body>
+</html>

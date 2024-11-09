@@ -1,0 +1,124 @@
+/* Basic styling for the dashboard */
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #970B0B;
+    padding: 20px;
+    height: 100vh;
+}
+
+.logo img {
+    width: 150px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-links li {
+    margin: 20px 0;
+}
+
+.nav-links li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links li a.active {
+    background-color: #BA1414;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background-color: #970B0B;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.filter-container select,
+.filter-container input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #970B0B;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+th {
+    background-color: #970B0B;
+    color: white;
+}
+
+.actions img {
+    cursor: pointer;
+    width: 20px;
+    margin: 0 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 2px solid #970B0B;
+    z-index: 1000;
+}
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal label,
+.modal input {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.modal button {
+    padding: 10px;
+    background-color: #970B0B;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

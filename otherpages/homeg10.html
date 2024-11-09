@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2; /* Ensure header stays on top */
+        }
+        header img {
+                    height: 35px;
+                }
+
+                header div {
+                    display: flex;
+                    align-items: center;
+                }
+
+                header button {
+                    margin-left: 15px;
+                    padding: 8px 12px;
+                    background-color: white;
+                    color: #970B0B;
+                    border: 2px solid #970B0B;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                header button:hover {
+                    background-color: #f0f0f0;
+                }
+                
+        .card.wide {
+            width: 415px; /* Adjust width as needed */
+            height: 300px; /* Increased height for better chart visibility */
+            margin: 20px;
+            position: relative; /* Position relative for absolute canvas */
+        }
+
+        canvas {
+            position: absolute; /* Position absolute to fill the card */
+            top: 0;
+            left: 0;
+            width: 100% !important; /* Force canvas to fill width */
+            height: 100% !important; /* Force canvas to fill height */
+        }
+
+       
+
+        nav {
+                width: 0;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #FDECEC;
+                color: #970B0B;
+                overflow-x: hidden;
+                transition: width 0.3s ease;
+                padding-top: 20px;
+                box-sizing: border-box;
+                z-index: 1;
+            }
+
+            nav.open {
+                width: 250px;
+            }
+
+            nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            nav ul li {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            nav ul li img {
+                width: 24px;
+                height: 24px;
+                margin-right: 15px;
+            }
+
+            nav ul li:hover {
+                background-color: #F3F3F3;
+                border-left: 5px solid #970B0B;
+            }
+        
+        .dashboard {
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center the cards horizontally */
+            margin-left: 20px;
+            padding: 20px;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+        }
+
+        .card {
+            width: 250px;
+            height: 150px;
+            border: 2px solid #970B0B;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            color: #970B0B;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h1 {
+            margin: 20px 0 10px;
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                margin-left: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileIS.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px; cursor: pointer;">
+        </div>
+    </header>
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('homeg10.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('usersg10.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progg10.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoptiongis.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>            
+            <li onclick="navigateTo('feedback.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="dashboard">
+        <div class="card">
+            <h1 id="totalUsersCount" style="font-size: 90px; margin-bottom: 0; margin-top: 0;">--</h1>
+            <p>USERS</p>
+        </div>
+
+        <div class="card">
+            <h1 id="grade10UsersCount" style="font-size: 90px; margin-bottom: 0; margin-top: 0;">--</h1>
+            <p>GRADE 10 USERS</p>
+        </div>
+
+        <div class="card">
+            <h1 id="grade12UsersCount" style="font-size: 90px; margin-bottom: 0; margin-top: 0;">--</h1>
+            <p>GRADE 12 USERS</p>
+        </div>
+        <div class="card wide" id="strandBarGraph">
+            <canvas id="strandChart"></canvas>
+        </div>
+        <div class="card wide">
+            <div style="width: 60%; height: 40%;">
+            <canvas id="resultsChart" width="100" height="100"></canvas>
+</div>
+
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        // Navigate to a new page
+        function navigateTo(page) {
+            window.location.href = page; // Change the page
+        }
+    
+        // Detect clicks outside the sidebar and close it if open
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    
+    </script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+        import { Chart, registerables } from "https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.esm.js";
+
+// Register necessary components
+Chart.register(...registerables);
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+    
+        // Protect page: Redirect if not logged in
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; // Replace with your landing page
+            }
+        });
+    
+        
+        let totalUsersCount = 0;
+    
+        // Retrieve Grade 10 user count from Firestore
+        async function fetchGrade10UsersCount() {
+            const q = query(collection(db, 'users'), where('gradeLevel', '==', 'Grade 10'));
+            const snapshot = await getDocs(q);
+            const grade10UsersCount = snapshot.size;
+            document.getElementById('grade10UsersCount').innerText = grade10UsersCount;
+            updateTotalUsersCount(grade10UsersCount, 0); // Pass 0 for Grade 12 users count
+        }
+    
+        // Retrieve Grade 12 user count from Firestore
+        async function fetchGrade12UsersCount() {
+            const uniqueUsers = new Set();
+            const q = query(collection(db, 'users'), where('gradeLevel', '==', 'Grade 12'));
+            const snapshot = await getDocs(q);
+            snapshot.forEach(doc => {
+                const userData = doc.data();
+                if (userData.strand) {
+                    uniqueUsers.add(doc.id);
+                }
+            });
+            const grade12UsersCount = uniqueUsers.size;
+            document.getElementById('grade12UsersCount').innerText = grade12UsersCount;
+            updateTotalUsersCount(0, grade12UsersCount);
+        }
+    
+        // Update total user count
+        function updateTotalUsersCount(grade10Count, grade12Count) {
+            totalUsersCount += grade10Count + grade12Count;
+            document.getElementById('totalUsersCount').innerText = totalUsersCount;
+        }
+    
+        // Call functions to fetch user counts
+        fetchGrade10UsersCount();
+        fetchGrade12UsersCount();
+    
+        
+        // Detect clicks outside the sidebar and close it if open
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+    
+        async function fetchStrandData() {
+            const strands = {
+                "STEM": 0,
+                "ABM": 0,
+                "GAS": 0,
+                "HUMSS": 0,
+            };
+            const uniqueUsers = new Set();
+    
+            const q = query(collection(db, 'users'), where('gradeLevel', '==', 'Grade 12'));
+            const snapshot = await getDocs(q);
+            snapshot.forEach(doc => {
+                const userData = doc.data();
+                const strand = userData.strand;
+    
+                if (strand && !uniqueUsers.has(doc.id)) {
+                    uniqueUsers.add(doc.id);
+                    if (strand === "Science, Technology, Engineering, and Mathematics") {
+                        strands["STEM"]++;
+                    } else if (strand === "Accountancy, Business, and Management") {
+                        strands["ABM"]++;
+                    } else if (strand === "General Academic Strand") {
+                        strands["GAS"]++;
+                    } else if (strand === "Humanities and Social Sciences") {
+                        strands["HUMSS"]++;
+                    }
+                }
+            });
+    
+            displayStrandChart(strands);
+        }
+    
+        function displayStrandChart(strands) {
+    const ctx = document.getElementById('strandChart').getContext('2d');
+    const labels = Object.keys(strands).filter(strand => strands[strand] !== undefined);
+    const data = Object.values(strands).filter(count => count !== undefined);
+
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,  // Ensure only valid labels
+            datasets: [{
+                label: 'Number of Users per Strand',
+                data: data,   // Ensure only valid data points
+                backgroundColor: [
+                    'rgba(179, 48, 48, 1)',    // #B33030 (Dark Red)
+                    'rgba(201, 76, 76, 1)',    // #C94C4C (Red)
+                    'rgba(214, 107, 107, 1)',  // #D66B6B (Light Red)
+                    'rgba(232, 164, 164, 1)',  // #E8A4A4 (Lighter Red)
+                    
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // Hides the legend to reduce clutter
+                },
+                title: {
+                    display: true, // Display the title
+                    text: 'Distribution of Users Across Strands', // Your desired title
+                    font: {
+                        size: 15,
+                        color: '#970B0B' // Set the font color
+                    },
+                    padding: {
+                        top: 10, // Space above the title
+                        bottom: 30, // Space below the title
+                        right: 10,
+                        left: 10,
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 20,   // Add padding on the left side
+                    right: 20,  // Add padding on the right side
+                    top: 10,    // Optional: padding on top
+                    bottom: 10   // Optional: padding on bottom
+                }
+            }
+        }
+    });
+}
+
+ 
+        fetchStrandData();
+
+        async function fetchResultsData() {
+    // Initialize counts for each category
+    const categoryCounts = {
+        enterprising: 0,
+        conventional: 0,
+        investigative: 0,
+        realistic: 0,
+        social: 0,
+        artistic: 0
+    };
+
+    try {
+        const q = query(collection(db, 'userResultG10'));
+        const snapshot = await getDocs(q);
+
+        // Loop through each document (student result) and determine the highest score(s)
+        snapshot.forEach(doc => {
+            const userData = doc.data();
+
+            // Log the user data for debugging
+            console.log("Processing document:", doc.id, userData);
+
+            // Ensure we're capturing the correct field names and values
+            const enterprising = userData.Enterprising || 0;
+            const conventional = userData.Conventional || 0;
+            const investigative = userData.Investigative || 0;
+            const realistic = userData.Realistic || 0;
+            const social = userData.Social || 0;
+            const artistic = userData.Artistic || 0;
+
+            // Log the extracted values for debugging
+            console.log("Extracted values:", { enterprising, conventional, investigative, realistic, social, artistic });
+
+            // Create an array of objects to map categories to values
+            const values = [
+                { category: 'enterprising', value: enterprising },
+                { category: 'conventional', value: conventional },
+                { category: 'investigative', value: investigative },
+                { category: 'realistic', value: realistic },
+                { category: 'social', value: social },
+                { category: 'artistic', value: artistic }
+            ];
+
+            // Find the highest value(s) for the current document
+            const maxValue = Math.max(...values.map(v => v.value));
+            console.log("Max value for document:", maxValue);
+
+            // Increment counts for all categories that have the highest value
+            values.forEach(v => {
+                if (v.value === maxValue && maxValue > 0) { // Check to ensure maxValue > 0
+                    categoryCounts[v.category] += 1;
+                    console.log(`Incremented count for category ${v.category}:`, categoryCounts[v.category]);
+                }
+            });
+
+            // Log current category counts after processing each document
+            console.log("Category counts so far:", categoryCounts);
+        });
+
+        // Now map the counts to the chart labels (STEM, ABM, HUMSS, GAS)
+        const resultCategories = {
+            "STEM": categoryCounts.investigative + categoryCounts.realistic,
+            "ABM": categoryCounts.enterprising + categoryCounts.conventional,
+            "HUMSS": categoryCounts.social,
+            "GAS": categoryCounts.artistic
+        };
+
+        // Log the final result categories for debugging
+        console.log("Final result categories for chart:", resultCategories);
+
+        // Display the result in a pie chart
+        displayResultsChart(resultCategories);
+
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+    }
+}
+
+function displayResultsChart(resultsData) {
+    const ctx = document.getElementById('resultsChart').getContext('2d');
+    const chartLabels = Object.keys(resultsData);
+    const chartValues = Object.values(resultsData);
+
+    if (resultsData) {
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Results Summary',
+                    data: chartValues,
+                    backgroundColor: [
+                        'rgba(179, 48, 48, 1)',    // #B33030 (Dark Red)
+                        'rgba(201, 76, 76, 1)',    // #C94C4C (Red)
+                        'rgba(214, 107, 107, 1)',  // #D66B6B (Light Red)
+                        'rgba(232, 164, 164, 1)',  // #E8A4A4 (Lighter Red)
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 10 // Set the legend font size here
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Grade 10 Results Summary by Strand',
+                        font: {
+                            size: 13, // Title font size
+                            font: '#970B0B' // Set the font color
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 10
+                    }
+                }
+            }
+        });
+    } else {
+        console.error("No data available for chart");
+    }
+}
+
+
+// Call the function to fetch data and display the chart
+fetchResultsData();
+
+window.logout = function() {
+    signOut(auth).then(() => {
+        // Adjust the path according to your project structure
+        window.location.href = '../landing.html'; // Navigate one level up to access landing.html
+        // or window.location.href = 'path/to/landing.html'; // Use the correct relative path
+    });
+};
+
+    </script>
+    
+</body>
+</html>

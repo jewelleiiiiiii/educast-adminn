@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+        .submit {
+            background-color: #970B0B; /* Primary color */
+            color: white; /* Text color */
+            padding: 10px 20px; /* Padding for spacing */
+            border: none; /* Remove default border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Font size */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+            margin-top: 15px; /* Space above the button */
+            width: 100%; /* Full width for responsiveness */
+        }
+        .submit:hover {
+            background-color: #b10b0b; /* Darker shade on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+        .submit:active {
+            transform: translateY(0); /* Reset lift effect when clicked */
+        }
+        header {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2;
+        }
+        .burger {
+            font-size: 20px; /* Keep it small */
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+            margin-right: 10px; /* Small space to the right */
+        }
+        header img {
+            height: 35px; /* Logo height */
+            margin: 0 auto; /* Center the logo */
+        }
+        header div {
+            margin-left: auto; /* Push the user icon to the right */
+            display: flex;
+            align-items: center;
+        }
+        header div img {
+            width: 35px; /* User icon size */
+            height: 30px; /* User icon size */
+            border-radius: 50%; /* Rounded user icon */
+            margin-left: 10px; /* Space between icons */
+        }
+        nav {
+            width: 0;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FDECEC;
+            color: #970B0B;
+            overflow-x: hidden;
+            transition: width 0.3s ease;
+            padding-top: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+        nav.open {
+            width: 250px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        nav ul li img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+        nav ul li:hover {
+            background-color: #F3F3F3;
+            border-left: 5px solid #970B0B;
+        }
+        .dashboard {
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center the cards horizontally */
+            margin-left: 20px;
+            padding: 20px;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #970B0B;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #FDECEC;
+            color: #970B0B;
+        }
+        .actions {
+            display: flex;
+            justify-content: center; /* Center the icons horizontally */
+            align-items: center; /* Center the icons vertically */
+        }
+        .actions img {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-left: 10px; /* You can adjust this if needed */
+        }
+        .custom-select {
+            position: relative;
+            width: 300px;
+            height: 10px;
+            margin-left: 880px;
+        }
+        .custom-select select {
+            display: none; /* Hide the default select element */
+        }
+        .select-selected {
+            background-color: #970B0B;
+            color: white;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 100%;
+        }
+        .select-selected:after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+        }
+        .select-items {
+            position: absolute;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 99;
+            width: 100%;
+            display: none;
+        }
+        .select-items div {
+            color: black;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .select-items div:hover {
+            background-color: #ddd;
+        }
+        .select-hide {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                margin-left: 0;
+            }
+        }
+        #editModal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7); /* Slightly darker for better contrast */
+        }
+        .modal-content {
+            background-color: #fff; /* Changed to white for a clean look */
+            margin: 5% auto; /* Adjusted margin for better spacing */
+            padding: 30px; /* Increased padding for a spacious feel */
+            border: 2px solid #970B0B; /* Thicker border for emphasis */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            width: 90%; /* Responsive width */
+            max-width: 400px; /* Max width for larger screens */
+        }
+        .close {
+            color: #970B0B;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer; /* Change cursor on hover */
+        }
+        h2 {
+            margin-top: 0; /* Remove top margin for better spacing */
+            text-align: center; /* Center the title */
+        }
+        label {
+            display: block; /* Block display for labels */
+            margin-bottom: 5px; /* Spacing between label and input */
+        }
+        input {
+            width: calc(100% - 10px); /* Full width minus padding */
+            padding: 8px; /* Padding for inputs */
+            margin-bottom: 15px; /* Spacing between inputs */
+            border: 1px solid #ccc; /* Light border for inputs */
+            border-radius: 5px; /* Rounded corners for inputs */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo">
+        <div>
+            <img src="../pics/user.png" alt="User Profile">
+        </div>
+    </header>
+    
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('home4th.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('users4th.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progoptions4th.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption4th.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoption4th.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>    
+            <li onclick="navigateTo('feedback4th.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    
+
+    <div class="dashboard">
+        <!-- Filter and Search Section -->
+        <div style="display:flex;margin-bottom: 20px;align-items: center; width: 1300px;">
+            <input type="text" id="searchInput" placeholder="Search name or email" onkeyup="filterTable()" style="flex: 1; margin-right: 100px;width: 400px; margin-top: 10px;" />
+            <div style="margin-left: 30px;">
+                <select id="courseSelect" onchange="filterTable()" style="height: 30px; margin-top: 0;">
+                    <option value="">All</option>
+                    <option value="Bachelor of Automotive Engineering Technology">Bachelor of Automotive Engineering Technology</option>
+                    <option value="Bachelor of Civil Engineering Technology">Bachelor of Civil Engineering Technology</option>
+                    <option value="Bachelor of Computer Engineering Technology">Bachelor of Computer Engineering Technology</option>
+                    <option value="Bachelor of Drafting Engineering Technology">Bachelor of Drafting Engineering Technology</option>
+                    <option value="Bachelor of Electrical Engineering Technology">Bachelor of Electrical Engineering Technology</option>
+                    
+                    <option value="Bachelor of Electronics Engineering Technology">Bachelor of Electronics Engineering Technology</option>
+                    <option value="Bachelor of Food Engineering Technology">Bachelor of Food Engineering Technology</option>
+                    <option value="Bachelor of Mechanical Engineering Technology">Bachelor of Mechanical Engineering Technology</option>
+                    <option value="Bachelor of Mechatronics Engineering Technology">Bachelor of Mechatronics Engineering Technology</option>
+                    <option value="Bachelor of Science in Criminology">Bachelor of Science in Criminology</option>
+                    <option value="Bachelor of Science in Psychology">Bachelor of Science in Psychology</option>
+                    <option value="Bachelor of Science in Information Technology">Bachelor of Science in Information Technology</option>
+                </select>
+            </div>
+        </div>
+        
+
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Campus</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User data will be populated here -->
+            </tbody>
+        </table>
+        <div id="editModal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Edit User</h2>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <label for="course">Course:</label>
+                <input type="text" id="course" required>
+                <label for="campus">Campus:</label>
+                <input type="text" id="campus" required>
+                <button class="submit" onclick="updateUser()">Update</button>
+            </div>
+        </div>
+        
+    </div>
+    
+    
+    <script>
+        function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+        function navigateTo(page) {
+    window.location.href = page; // This will redirect to the specified page
+}
+
+
+    function filterTable() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const courseSelect = document.getElementById("courseSelect").value;
+    const table = document.getElementById("usersTable");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
+        const tdFirstName = tr[i].getElementsByTagName("td")[0];
+        const tdLastName = tr[i].getElementsByTagName("td")[1];
+        const tdEmail = tr[i].getElementsByTagName("td")[2];
+        const tdCourse = tr[i].getElementsByTagName("td")[3];
+        const tdCampus = tr[i].getElementsByTagName("td")[4];
+
+        // Get the text content of the relevant cells
+        const firstNameText = tdFirstName ? tdFirstName.textContent || tdFirstName.innerText : "";
+        const lastNameText = tdLastName ? tdLastName.textContent || tdLastName.innerText : "";
+        const emailText = tdEmail ? tdEmail.textContent || tdEmail.innerText : "";
+        const courseText = tdCourse ? tdCourse.textContent || tdCourse.innerText : "";
+
+        // Check if the row matches the search criteria
+        const matchesSearch = firstNameText.toLowerCase().includes(searchInput) ||
+                              lastNameText.toLowerCase().includes(searchInput) ||
+                              emailText.toLowerCase().includes(searchInput);
+
+        // Check if the row matches the selected course
+        const matchesCourse = courseSelect === "" || courseText === courseSelect;
+
+        // Show or hide the row based on the matches
+        if (matchesSearch && matchesCourse) {
+            tr[i].style.display = ""; // Show the row
+        } else {
+            tr[i].style.display = "none"; // Hide the row
+        }
+    }
+}
+
+let currentUserId; // Store the current user's ID for updating
+
+// Function to open the edit modal and populate fields
+function openEditModal(userData) {
+    currentUserId = userData.id; // Store the user ID
+    document.getElementById('firstName').value = userData.firstName;
+    document.getElementById('lastName').value = userData.lastName;
+    document.getElementById('email').value = userData.email;
+    document.getElementById('course').value = userData.course;
+    document.getElementById('campus').value = userData.campus;
+    document.getElementById('editModal').style.display = 'block'; // Show modal
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none'; // Hide modal
+}
+
+
+    </script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+    
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; // Replace with your landing page
+            } else {
+                fetchUsers(); // Call fetchUsers after confirming user is logged in
+            }
+        });
+        
+    
+
+        window.updateUser = async function() {
+    if (!currentUserId) {
+        console.error("No user ID found for updating.");
+        return; // Prevent further execution
+    }
+
+    const updatedData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        course: document.getElementById('course').value,
+        campus: document.getElementById('campus').value,
+    };
+
+    try {
+        const userRef = doc(db, 'users', currentUserId);
+        await updateDoc(userRef, updatedData);
+        closeModal();
+        alert("Updated Successfully!")
+        fetchUsers();
+    } catch (error) {
+        console.error("Error updating user: ", error);
+    }
+};
+async function deleteUser(userId) {
+    // Prompt for confirmation before deletion
+    const confirmDelete = confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) {
+        return; // If not confirmed, exit the function
+    }
+
+    // Firestore reference to the user's document
+    const userRef = doc(db, 'users', userId);
+
+    try {
+        // Delete the user document from Firestore
+        await deleteDoc(userRef);
+        console.log(`User with Firestore ID ${userId} deleted from Firestore successfully.`);
+
+        // Refresh the user table after deletion
+        fetchUsers();
+    } catch (error) {
+        console.error("Error deleting user: ", error);
+    }
+}
+
+
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            window.location.href = 'landing.html'; // Redirect if not logged in
+        } else {
+            fetchUsers(); // Fetch users if logged in
+        }
+    });
+        async function fetchUsers() {
+    const usersRef = collection(db, 'users');
+    
+    const q = query(usersRef, where("gradeLevel", "in", ["Fourth-year College"]));
+    const querySnapshot = await getDocs(q);
+    const tbody = document.querySelector('#usersTable tbody');
+
+    // Clear the table before populating
+    tbody.innerHTML = '';
+
+    querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const row = document.createElement('tr');
+
+        // Create cells for user data
+        row.innerHTML = `
+            <td>${data.firstName}</td>
+            <td>${data.lastName}</td>
+            <td>${data.email}</td>
+            <td>${data.course}</td>
+            <td>${data.campus}</td>
+            <td class="actions"></td>
+        `;
+
+        // Create edit icon
+        const editIcon = document.createElement('img');
+        editIcon.src = "../pics/edit.png";
+        editIcon.alt = "Edit";
+        editIcon.style.cursor = 'pointer';
+        editIcon.addEventListener('click', () => {
+    openEditModal({ ...data, id: doc.id }); // Ensure to include the id here
+});
+
+        // Create delete icon
+        const deleteIcon = document.createElement('img');
+        deleteIcon.src = "../pics/remove.png";
+        deleteIcon.alt = "Delete";
+        deleteIcon.style.cursor = 'pointer';
+        deleteIcon.addEventListener('click', () => deleteUser(doc.id));
+
+        // Append icons to the actions cell
+        const actionsCell = row.querySelector('.actions');
+        actionsCell.appendChild(editIcon);
+        actionsCell.appendChild(deleteIcon);
+
+        // Append the row to the tbody
+        tbody.appendChild(row);
+    });
+}
+
+</script>
+</body>
+</html>

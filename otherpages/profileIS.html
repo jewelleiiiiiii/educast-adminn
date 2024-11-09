@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST - Profile</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png"><!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2;
+        }
+
+        header img {
+            height: 35px;
+        }
+
+        header div {
+            display: flex;
+            align-items: center;
+        }
+
+        header button {
+            margin-left: 15px;
+            padding: 8px 12px;
+            background-color: white;
+            color: #970B0B;
+            border: 2px solid #970B0B;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background-color: #f0f0f0;
+        }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FDECEC;
+            color: #970B0B;
+            overflow-x: hidden;
+            transition: width 0.3s ease;
+            padding-top: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        nav.open {
+            width: 250px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        nav ul li img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        nav ul li:hover {
+            background-color: #F3F3F3;
+            border-left: 5px solid #970B0B;
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .profile-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container h2 {
+            color: #970B0B;
+            margin-bottom: 20px;
+        }
+
+        .profile-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-item label {
+            font-weight: bold;
+            color: #333;
+            width: 150px; /* fixed width for label */
+        }
+
+        .profile-item p {
+            margin: 5px 0;
+            color: #555;
+            flex-grow: 1; /* to fill available space */
+            text-align: right; /* align text to the right */
+        }
+
+        .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    width: 100%; /* Ensure the buttons take up the full width */
+}
+
+.button-group button {
+    padding: 10px 15px;
+    background-color: #970B0B;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-basis: 48%; /* Each button takes up about half the width with a small gap */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the text and image in the button */
+}
+
+.button-group button:hover {
+    background-color: #7e0b0b;
+}
+
+.edit-button img {
+    margin-right: 8px; /* Space between the image and the text */
+    height: 20px; /* Adjust the icon size */
+    width: 20px;
+}
+
+
+        @media (max-width: 768px) {
+            nav {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        .profile-image-container {
+    width: 100px; /* Adjust as needed */
+    height: 100px; /* Adjust as needed */
+    border-radius: 50%; /* Makes it circular */
+    overflow: hidden; /* Ensures the image fits in the circle */
+    margin: 0 auto; /* Centers the image container */
+    position: relative;
+    z-index: 1; /* Ensures it's above other elements */
+}
+
+.profile-image {
+    width: 100%; /* Full width of the container */
+    height: auto; /* Maintains aspect ratio */
+}
+
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+    
+        const authh = getAuth(app);
+        window.logout = function() {
+        signOut(authh).then(() => {
+            // Adjust the path according to your project structure
+            window.location.href = '../landing.html'; // Navigate one level up to access landing.html
+            // or window.location.href = 'path/to/landing.html'; // Use the correct relative path
+        });
+    };
+    
+    </script>
+</head>
+<body>
+
+    <header>
+       <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileIS.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px;">
+        </div>
+    </header>
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('homeg10.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('usersg10.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progg10.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoptiongis.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>            
+            <li onclick="navigateTo('feedback.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="content">
+        <div class="profile-container">
+                <div class="profile-image-container">
+                    <img src="../pics/is.jpg" alt="Profile Image" class="profile-image">
+                </div>
+            <h2 style="text-align: center; margin-bottom: 0px;">Batangas State University</h2>
+            <h2 style="text-align: center; margin-top: 0px;">Integrated School</h2>
+            <div class="profile-item">
+                <label>Email:</label>
+                <p id="email">Loading...</p>
+            </div>
+            <div class="profile-item">
+                <label>Password:</label>
+                <p>********</p>
+            </div>
+            <div class="profile-item">
+                <label>Campus:</label>
+                <p id="campus">Loading...</p>
+            </div>
+            <div class="profile-item">
+                <label>Account Type:</label>
+                <p id="accountType">Loading...</p>
+            </div>
+            <div class="button-group">
+                <button class="edit-button">
+                    <img src="../pics/edit.png" alt="Edit Icon" class="button-icon"> Edit
+                </button>
+                <button class="reset-button" onclick="openResetModal()">Reset Password</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background-color:white; padding:30px; border-radius:10px; width:400px; max-width:90%; position:relative;">
+        <h3 style="text-align:center; color: #970B0B; margin-bottom: 20px;">Edit Profile</h3>
+        <div style="margin-bottom: 15px;">
+            <label for="editEmail" style="font-weight:bold; display:block; margin-bottom:5px; color: #333;">Email:</label>
+            <input type="email" id="editEmail" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" />
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="editCampus" style="font-weight:bold; display:block; margin-bottom:5px; color: #333;">Campus:</label>
+            <input type="text" id="editCampus" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" />
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:20px;">
+            <button onclick="saveChanges()" style="padding:10px 20px; background-color:#970B0B; color:white; border:none; border-radius:5px; cursor:pointer; flex-basis:48%;">Save</button>
+            <button onclick="closeModal()" style="padding:10px 20px; background-color:#f0f0f0; color:#333; border:none; border-radius:5px; cursor:pointer; flex-basis:48%;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div id="resetPasswordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background-color:white; padding:30px; border-radius:10px; width:400px; max-width:90%; position:relative;">
+        <h3 style="text-align:center; color: #970B0B; margin-bottom: 20px;">Reset Password</h3>
+
+<!-- Current Password -->
+<div style="margin-bottom: 15px; position:relative;">
+    <label for="currentPassword" style="font-weight:bold; display:block; margin-bottom:5px; color: #333;">Current Password:</label>
+    <input type="password" id="currentPassword" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" />
+    <span onclick="togglePasswordVisibility('currentPassword', 'currentEye')" style="position:absolute; right:10px; top:35px; cursor:pointer;">
+        <i id="currentEye" class="fas fa-eye"></i>
+    </span>
+</div>
+
+<!-- New Password -->
+<div style="margin-bottom: 15px; position:relative;">
+    <label for="newPassword" style="font-weight:bold; display:block; margin-bottom:5px; color: #333;">New Password:</label>
+    <input type="password" id="newPassword" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" />
+    <span onclick="togglePasswordVisibility('newPassword', 'newEye')" style="position:absolute; right:10px; top:35px; cursor:pointer;">
+        <i id="newEye" class="fas fa-eye"></i>
+    </span>
+</div>
+
+<!-- Confirm Password -->
+<div style="margin-bottom: 15px; position:relative;">
+    <label for="confirmPassword" style="font-weight:bold; display:block; margin-bottom:5px; color: #333;">Confirm Password:</label>
+    <input type="password" id="confirmPassword" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" />
+    <span onclick="togglePasswordVisibility('confirmPassword', 'confirmEye')" style="position:absolute; right:10px; top:35px; cursor:pointer;">
+        <i id="confirmEye" class="fas fa-eye"></i>
+    </span>
+</div>
+
+
+        <!-- Button Group -->
+        <div style="display:flex; justify-content:space-between; margin-top:20px;">
+            <button onclick="resetPassword()" style="padding:10px 20px; background-color:#970B0B; color:white; border:none; border-radius:5px; cursor:pointer; flex-basis:48%;">Reset</button>
+            <button onclick="closeResetModal()" style="padding:10px 20px; background-color:#f0f0f0; color:#333; border:none; border-radius:5px; cursor:pointer; flex-basis:48%;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            databaseURL: "https://educast-570fd-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Initialize Firebase Auth
+        const auth = firebase.auth();
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const uid = user.uid;
+                // Fetch data from Firestore based on the user's UID
+                db.collection("users").doc(uid).get().then((doc) => {
+                    if (doc.exists) {
+                        document.getElementById("email").innerText = doc.data().email;
+                        document.getElementById("campus").innerText = doc.data().campus;
+                        document.getElementById("accountType").innerText = doc.data().accountType;
+                    } else {
+                        console.log("No such document!");
+                    }
+                }).catch((error) => {
+                    console.log("Error getting document:", error);
+                });
+            } else {
+                console.log("No user is signed in.");
+            }
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+        document.querySelector('.button-group button').addEventListener('click', function() {
+    const email = document.getElementById("email").innerText;
+    const campus = document.getElementById("campus").innerText;
+
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editCampus").value = campus;
+
+    document.getElementById("editModal").style.display = 'flex';
+});
+
+function closeModal() {
+    document.getElementById("editModal").style.display = 'none';
+}
+function saveChanges() {
+    const email = document.getElementById("editEmail").value;
+    const campus = document.getElementById("editCampus").value;
+
+    // Get the current user
+    const user = auth.currentUser;
+    if (user) {
+        const uid = user.uid;
+
+        // Update Firestore
+        db.collection("users").doc(uid).update({
+            email: email,
+            campus: campus
+        }).then(() => {
+            console.log("Document successfully updated!");
+            // Close modal and refresh data
+            closeModal();
+            // Fetch updated data
+            fetchUserData();
+        }).catch((error) => {
+            console.error("Error updating document: ", error);
+        });
+    }
+}
+function fetchUserData() {
+    const user = auth.currentUser;
+    if (user) {
+        const uid = user.uid;
+        db.collection("users").doc(uid).get().then((doc) => {
+            if (doc.exists) {
+                document.getElementById("email").innerText = doc.data().email;
+                document.getElementById("campus").innerText = doc.data().campus;
+                document.getElementById("accountType").innerText = doc.data().accountType;
+            } else {
+                console.log("No such document!");
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+    } else {
+        console.log("No user is signed in.");
+    }
+}
+
+// Call this function after initializing the auth state listener
+auth.onAuthStateChanged(function(user) {
+    if (user) {
+        fetchUserData();
+    } else {
+        console.log("No user is signed in.");
+    }
+});
+function togglePasswordVisibility(passwordFieldId, eyeIconId) {
+        var passwordField = document.getElementById(passwordFieldId);
+        var eyeIcon = document.getElementById(eyeIconId);
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";  // Show the password
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");  // Change to slash eye icon
+        } else {
+            passwordField.type = "password";  // Hide the password
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");  // Change back to eye icon
+        }
+    }
+
+function resetPassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const user = firebase.auth().currentUser;
+
+    // Check if new password meets criteria
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+        alert('Password must be at least 8 characters long, and include 1 number, 1 special character, 1 uppercase, and 1 lowercase letter.');
+        return;
+    }
+
+    // Check if new and confirm passwords match
+    if (newPassword !== confirmPassword) {
+        alert('New password and confirm password do not match.');
+        return;
+    }
+
+    // Reauthenticate the user with the current password
+    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+    user.reauthenticateWithCredential(credential).then(() => {
+        // If reauthentication successful, update password
+        user.updatePassword(newPassword).then(() => {
+            alert('Password successfully updated.');
+            closeResetModal();
+        }).catch((error) => {
+            alert('Error updating password: ' + error.message);
+        });
+    }).catch((error) => {
+        alert('Current password is incorrect.');
+    });
+}
+
+function closeResetModal() {
+    document.getElementById('resetPasswordModal').style.display = 'none';
+}
+
+// Function to open the modal
+function openResetModal() {
+    document.getElementById('resetPasswordModal').style.display = 'flex';
+}
+
+
+    </script>
+
+</body>
+</html>

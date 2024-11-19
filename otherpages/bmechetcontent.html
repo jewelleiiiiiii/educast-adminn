@@ -268,7 +268,7 @@ td:nth-child(2), .action-buttons {
         let currentQuestionNumber; // Define a global variable to store the question number
 
         async function fetchQuestions() {
-    const strandDocRef = doc(db, 'programcontent', 'Bachelor of Civil Engineering Technology'); 
+    const strandDocRef = doc(db, 'programcontent', 'Bachelor of Mechanical Engineering Technology'); 
     const strandDoc = await getDoc(strandDocRef); 
 
     if (strandDoc.exists()) {
@@ -312,7 +312,7 @@ async function saveChanges(questionNumber) {
     currentQuestionNumber = questionNumber;
 
     try {
-        const strandDocRef = doc(db, 'programcontent', 'Bachelor of Civil Engineering Technology');
+        const strandDocRef = doc(db, 'programcontent', 'Bachelor of Mechanical Engineering Technology');
 
         // Retrieve updated content from the input field
         const updatedContent = document.getElementById('editContent').value;
@@ -338,7 +338,7 @@ window.saveChanges = saveChanges;
 
     async function editField(fieldId) {
     try {
-        const strandDocRef = doc(db, 'programcontent', 'Bachelor of Civil Engineering Technology');
+        const strandDocRef = doc(db, 'programcontent', 'Bachelor of Mechanical Engineering Technology');
         const strandDoc = await getDoc(strandDocRef);
 
         if (strandDoc.exists()) {

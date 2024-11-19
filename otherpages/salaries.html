@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCAST</title>
+    <link rel="icon" type="image/png" href="../pics/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 5px 15px;
+            color: #970B0B;
+            border-bottom: 3px solid #970B0B;
+            position: relative;
+            z-index: 2; /* Ensure header stays on top */
+        }
+        header img {
+                    height: 35px;
+                }
+
+                header div {
+                    display: flex;
+                    align-items: center;
+                }
+
+                header button {
+                    margin-left: 15px;
+                    padding: 8px 12px;
+                    background-color: white;
+                    color: #970B0B;
+                    border: 2px solid #970B0B;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                header button:hover {
+                    background-color: #f0f0f0;
+                }
+
+        nav {
+                width: 0;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #FDECEC;
+                color: #970B0B;
+                overflow-x: hidden;
+                transition: width 0.3s ease;
+                padding-top: 20px;
+                box-sizing: border-box;
+                z-index: 1;
+            }
+
+            nav.open {
+                width: 250px;
+            }
+
+            nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            nav ul li {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            nav ul li img {
+                width: 24px;
+                height: 24px;
+                margin-right: 15px;
+            }
+
+            nav ul li:hover {
+                background-color: #F3F3F3;
+                border-left: 5px solid #970B0B;
+            }
+        
+        .dashboard {
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center the cards horizontally */
+            margin-left: 20px;
+            padding: 20px;
+            flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+        }
+
+        .burger {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: #970B0B;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                margin-left: 0;
+            }
+        }
+
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #970B0B;
+    padding: 10px;
+    vertical-align: middle; /* Vertically center the content */
+}
+
+th {
+    background-color: #FDECEC;
+    color: #970B0B;
+}
+
+/* Align the 'Questions' column to the left */
+td:first-child {
+    text-align: left;
+}
+
+/* Center the 'Category' and 'Actions' columns */
+td:nth-child(2), .action-buttons {
+    text-align: center;
+}
+
+/* Center action icons */
+.action-buttons {
+    display: flex;
+    justify-content: center; /* Center the action icons horizontally */
+    align-items: center; /* Center the action icons vertically */
+}
+
+.action-buttons img {
+    width: 20px;
+    cursor: pointer;
+    margin: 0 5px; /* Add margin between the icons */
+}
+
+.modal {
+            display: none;
+            position: fixed;
+            z-index: 3;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #970B0B;
+            width: 400px;
+            border-radius: 5px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #970B0B;
+        }
+
+        .modal-header span {
+            cursor: pointer;
+            font-size: 20px;
+            color: #970B0B;
+        }
+
+        .modal-body {
+            margin-top: 15px;
+        }
+
+        .modal-body label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-body input {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #970B0B;
+            border-radius: 5px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            background-color: #970B0B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-footer button:hover {
+            background-color: #c60e0e;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="burger" onclick="toggleSidebar()">&#9776;</button>
+        <img src="../pics/logo.png" alt="EduCAST Logo" style="width:60px; height:40px;">
+        <div>
+            <button onclick="logout()">Logout</button>
+            <img src="../pics/user.png" alt="User Profile" onclick="navigateTo('profileMalvar.html')" style="width:35px; height:30px; border-radius:50%; margin-left:10px;">
+        </div>
+    </header>
+    
+    <nav id="sidebar">
+        <ul>
+            <li style="margin-top: 40px;" onclick="navigateTo('home4th.html')">
+                <img src="../pics/home.png" alt="Home Icon"> Home
+            </li>
+            <li onclick="navigateTo('users4th.html')">
+                <img src="../pics/users.png" alt="Users Icon"> Users
+            </li>
+            <li onclick="navigateTo('progoptions4th.html')">
+                <img src="../pics/progress.png" alt="Progress Icon"> User Progress
+            </li>
+            <li onclick="navigateTo('assessmentoption4th.html')">
+                <img src="../pics/assess.png" alt="Assessments Icon"> Assessments
+            </li>
+            <li onclick="navigateTo('contentoption4th.html')">
+                <img src="../pics/content.png" alt="Content Icon"> Contents
+            </li>    
+            <li onclick="navigateTo('feedback4th.html')">
+                <img src="../pics/feedback.png" alt="Feedback Icon"> Feedback
+            </li>
+        </ul>
+    </nav>
+    
+     <div class="dashboard">
+        
+        
+            <table id="questionsTable">
+                <thead>
+                    <tr>
+                        <th>Job Positions</th>
+                        <th>Minimum Salary</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>            
+    </div>
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Quantity</h2>
+                <span onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="editQuestion">Program</label>
+                <input type="text" id="Program" disabled>
+                <label for="editQuantity">Quantity</label>
+                <input type="text" id="editQuantity">
+            </div>
+            <div class="modal-footer">
+                <button onclick="saveChanges()">Save</button>
+
+
+
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getFirestore, getDocs, collection, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjEJj6jTrsMabEaiUrdIkzVFr3U_smdH0",
+            authDomain: "educast-570fd.firebaseapp.com",
+            projectId: "educast-570fd",
+            storageBucket: "educast-570fd.appspot.com",
+            messagingSenderId: "112945444377",
+            appId: "1:112945444377:web:90dc2862a31c9b9262dc88"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Protect page: Redirect if not logged in
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'landing.html'; // Replace with your landing page
+            }
+        });
+        
+        window.logout = function() {
+            signOut(auth).then(() => {
+                window.location.href = '../landing.html'; 
+            });
+        };
+    
+        window.saveChanges = async function() {
+    const program = document.getElementById("Program").value;
+    const quantity = parseFloat(document.getElementById("editQuantity").value);  // Convert to number
+
+    
+    if (program && quantity) {
+        try {
+            // Define the collection reference
+            const collectionRef = collection(db, "topSalaryJobs");
+
+            // Fetch all documents in the collection
+            const querySnapshot = await getDocs(collectionRef);
+
+            if (querySnapshot.empty) {
+                console.log("No documents found in the collection");
+                return;  // Exit if no documents are found
+            }
+
+            // Loop through the documents and update the first document (or you can specify criteria to find the right one)
+            const docRef = doc(db, "topSalaryJobs", querySnapshot.docs[0].id); // Take the first document
+
+            // Check if the document exists before updating
+            const docSnapshot = await getDoc(docRef);
+            if (docSnapshot.exists()) {
+    // Update the document with the new data
+    await updateDoc(docRef, {
+        [program]: quantity  // Use the program name as the field name and update its value
+    });
+
+
+    // Alert user that the changes have been saved successfully
+    alert("Changes saved successfully!");
+
+    // Refresh the page to reflect the changes
+    location.reload();
+}
+ else {
+                console.log("Document does not exist, no update performed.");
+            }
+        } catch (error) {
+            console.error("Error saving changes:", error);
+        }
+    } else {
+        alert("Program and Quantity must be provided.");
+    }
+
+    // Close the modal after saving
+    closeModal();
+};
+
+window.closeModal = function() {
+    document.getElementById("editModal").style.display = "none";
+};
+
+    
+        // Define the closeModal function
+        window.closeModal = function() {
+            document.getElementById("editModal").style.display = "none";
+        };
+    
+        async function fetchAndDisplayTopCourses() {
+            try {
+                const tableBody = document.querySelector("#questionsTable tbody");
+                const querySnapshot = await getDocs(collection(db, "topSalaryJobs"));
+    
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+    
+                    // Iterate over each key-value pair in the document data
+                    for (const [key, value] of Object.entries(data)) {
+                        // Create a new row for each field
+                        const row = document.createElement("tr");
+    
+                        // Field ID cell
+                        const fieldIdCell = document.createElement("td");
+                        fieldIdCell.textContent = key; // Display the field ID
+                        row.appendChild(fieldIdCell);
+    
+                        // Value cell
+const valueCell = document.createElement("td");
+
+// Format the value with the currency symbol
+valueCell.textContent = `₱ ${value !== undefined ? value : "N/A"}`; // Handle undefined values and format as currency
+
+row.appendChild(valueCell);
+
+    
+                        // Actions cell
+                        const actionsCell = document.createElement("td");
+                        actionsCell.className = "action-buttons";
+    
+                        // Example edit icon
+                        const editIcon = document.createElement("img");
+                        editIcon.src = "../pics/edit.png";
+                        editIcon.alt = "Edit";
+                        editIcon.title = "Edit";
+                        editIcon.onclick = () => openEditModal(doc.id, key, value); // Pass document ID, field ID, and value
+    
+                        actionsCell.appendChild(editIcon);
+                        row.appendChild(actionsCell);
+    
+                        // Append the row to the table body
+                        tableBody.appendChild(row);
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+    
+        // Call the fetch function on page load
+        fetchAndDisplayTopCourses();
+    
+        function openEditModal(docId, fieldId, value) {
+            // Populate the modal with the values passed as arguments
+            document.getElementById("Program").value = fieldId; // Set the field ID (Program) in the input
+            document.getElementById("editQuantity").value = value; // Set the value in the quantity input
+            document.getElementById("editModal").style.display = "flex"; // Show the modal
+        }
+    </script>
+    <script>
+                
+                function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    
+        // Navigate to a new page
+        function navigateTo(page) {
+            window.location.href = page; // Change the page
+        }
+    
+        // Detect clicks outside the sidebar and close it if open
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const burger = document.querySelector('.burger');
+            if (!sidebar.contains(event.target) && !burger.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+    
+</body>
+</html>

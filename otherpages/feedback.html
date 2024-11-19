@@ -36,6 +36,7 @@
 
     let index = 1;
 
+
     feedbackSnapshot.forEach((feedbackDoc) => {
         const feedbackData = feedbackDoc.data();
         const feedbackId = feedbackDoc.id;
@@ -124,6 +125,17 @@
         window.saveReply = saveReply;
         window.closeModal = closeModal;
         window.onload = fetchFeedback;
+    </script>
+    <script>
+           function toggleSidebar() {
+            console.log("Toggling sidebar"); // Debug log
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+        // Navigate to a new page
+        function navigateTo(page) {
+            window.location.href = page; // Change the page
+        }
     </script>
 
     <style>
